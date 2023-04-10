@@ -125,7 +125,7 @@ dependencies {
     testImplementation "org.junit.vintage:junit-vintage-engine:$junit5_version"
     testImplementation 'io.mockk:mockk:1.13.4'
     testImplementation 'org.robolectric:robolectric:4.9.2'
-
+    testImplementation "org.jetbrains.kotlin:kotlin-reflect:$coroutines_test_version"
 
     androidTestImplementation 'io.mockk:mockk-android:1.13.4'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'

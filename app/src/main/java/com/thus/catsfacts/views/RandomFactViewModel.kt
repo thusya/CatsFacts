@@ -5,11 +5,15 @@ import androidx.lifecycle.*
 import com.thus.catsfacts.R
 import com.thus.catsfacts.util.Connectivity
 import com.thus.catsfacts.views.repo.RandomFactRepo
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.launch
 
-class RandomFactViewModel(private val randomFactRepo: RandomFactRepo) : ViewModel() {
+class RandomFactViewModel(
+    private val randomFactRepo: RandomFactRepo,
+    private val dispatchersIO: CoroutineDispatcher = Dispatchers.IO
+) : ViewModel() {
 
     private val liveData = MutableLiveData<State>()
 
@@ -20,10 +24,10 @@ class RandomFactViewModel(private val randomFactRepo: RandomFactRepo) : ViewMode
     }
 
     private fun getRandomFact() {
-        viewModelScope.launch(Dispatchers.IO) {
-                randomFactRepo.fetchRandomFact().catch { exception ->
-                    liveData.postValue(State.Error(exception))
-                }
+        viewModelScope.launch(dispatchersIO) {
+            randomFactRepo.fetchRandomFact().catch { exception ->
+                liveData.postValue(State.Error(exception))
+            }
                 .collect {
                     liveData.postValue(State.Add(it))
                 }
@@ -35,7 +39,7 @@ class RandomFactViewModel(private val randomFactRepo: RandomFactRepo) : ViewMode
     }
 
     fun delete(catId: String) {
-        viewModelScope.launch(Dispatchers.IO) {
+        viewModelScope.launch(dispatchersIO) {
             randomFactRepo.delete(catId).catch { e ->
                 liveData.postValue(State.Error(e))
             }.collect {
